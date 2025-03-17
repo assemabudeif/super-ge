@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "57416268901",
+    "project_id": "super-ge",
+    "storage_bucket": "super-ge.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:57416268901:android:bd9b6dec7aa0dc034b1a8c",
+        "android_client_info": {
+          "package_name": "assem.abudeif.super.ge"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZukEjGIR3MDqvZme_90lsd7rF4wI0ywA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:57416268901:android:6f611ac2cf5d8efa4b1a8c",
+        "android_client_info": {
+          "package_name": "com.example.super_ge"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZukEjGIR3MDqvZme_90lsd7rF4wI0ywA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
