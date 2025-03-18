@@ -4,6 +4,7 @@ import 'package:super_ge/controllers/admin_home_controller.dart';
 import 'package:super_ge/core/theme/app_colors.dart';
 import 'package:super_ge/views/add_new_collection.dart';
 import 'package:super_ge/views/all_mandob.dart';
+import 'package:super_ge/views/all_notes.dart';
 import 'package:super_ge/views/entries_view.dart';
 
 class AdminHome extends StatelessWidget {
@@ -63,6 +64,13 @@ class AdminHome extends StatelessWidget {
                   title: const Text('المندوبين'),
                   onTap: () {
                     Get.to(() => const AllMandob());
+                  },
+                ),
+                Divider(),
+                ListTile(
+                  title: const Text('الملاحظات'),
+                  onTap: () {
+                    Get.to(() => const AllNotes());
                   },
                 ),
                 Divider(),
@@ -150,6 +158,7 @@ class AdminHome extends StatelessWidget {
                                         () => EntriesView(),
                                         arguments: {
                                           'id': category.id,
+                                          'gomlahPrice': category.gomlahPrice,
                                         },
                                       );
                                     },
@@ -258,7 +267,7 @@ class AdminHome extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailItem(String label, int value) {
+  Widget _buildDetailItem(String label, num value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [

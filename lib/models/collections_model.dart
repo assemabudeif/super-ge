@@ -3,10 +3,10 @@ import 'package:equatable/equatable.dart';
 class CollectionsModel extends Equatable {
   final String? id;
   final String name;
-  final int endSellPrice;
-  final int gomlahPrice;
-  final int quantity;
-  final int startSellPrice;
+  final num endSellPrice;
+  final num gomlahPrice;
+  final num quantity;
+  final num startSellPrice;
 
   const CollectionsModel({
     this.id,

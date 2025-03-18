@@ -27,7 +27,7 @@ class AddNewEntryController extends GetxController {
 
   submit() async {
     if (collection == null) return;
-    int newQuantity = collection!.quantity - int.parse(quantityController.text);
+    num newQuantity = collection!.quantity - num.parse(quantityController.text);
     if (newQuantity <= 0) {
       Get.snackbar(
         'خطأ',

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:super_ge/core/services/app_prefs.dart';
 
 import '../controllers/entries_controller.dart';
 import '../widgets/entry_widget.dart';
@@ -15,6 +16,22 @@ class EntriesView extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(
             title: const Text('المدخلات'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: () {
+                  controller.getEntries();
+                },
+              ),
+              if (AppPreferences.instance.getUserType() == 'admin') ...[
+                Text(
+                  "الارباح: ${num.parse(controller.allProfits()).toStringAsFixed(2)} جنيه",
+                ),
+                const SizedBox(
+                  width: 16,
+                ),
+              ]
+            ],
           ),
           body: CustomScrollView(
             slivers: [

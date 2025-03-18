@@ -8,10 +8,12 @@ class EntriesController extends GetxController {
   List<EntriesModel> entries = [];
   String collectionId = '';
   bool isLoading = false;
+  num gomlahPrice = 0;
 
   @override
   void onInit() {
     collectionId = Get.arguments?['id'] ?? '';
+    gomlahPrice = Get.arguments?['gomlahPrice'] ?? 0;
     getEntries();
     super.onInit();
   }
@@ -41,5 +43,13 @@ class EntriesController extends GetxController {
       );
     }
     update();
+  }
+
+  String allProfits() {
+    num sum = 0;
+    for (var element in entries) {
+      sum += (element.price - gomlahPrice);
+    }
+    return sum.toString();
   }
 }

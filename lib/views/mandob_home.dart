@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:super_ge/core/theme/app_colors.dart';
+import 'package:super_ge/views/all_notes.dart';
 
 import 'add_new_entry.dart';
 import '../controllers/mandob_home_controller.dart';
@@ -12,6 +14,66 @@ class MandobHome extends GetView<MandobHomeController> {
     return GetBuilder<MandobHomeController>(
       init: MandobHomeController(),
       builder: (controller) => Scaffold(
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).padding.top,
+            ),
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'لوحة التحكم',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                      ),
+                    ),
+                    Text(
+                      'المندوب',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      'الاسم: ${controller.name}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      'رقم الموبايل: ${controller.phone}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ListTile(
+                title: const Text('الملاحظات'),
+                onTap: () {
+                  Get.to(() => const AllNotes());
+                },
+              ),
+              Divider(),
+              ListTile(
+                title: const Text('تسجيل الخروج'),
+                onTap: () {
+                  controller.logout();
+                },
+              ),
+            ],
+          ),
+        ),
         appBar: AppBar(
           title: const Text('لوحة التحكم المندوب'),
           centerTitle: true,
@@ -150,7 +212,7 @@ class MandobHome extends GetView<MandobHomeController> {
     );
   }
 
-  Widget _buildDetailItem(String label, int value) {
+  Widget _buildDetailItem(String label, num value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [

@@ -7,4 +7,6 @@ class FirebaseService {
           String collectionId) =>
       db.collection('collections').doc(collectionId).collection('entries');
   static final usersCollection = db.collection('users');
+
+  static final notesCollection = db.collection('notes');
 }

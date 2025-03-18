@@ -6,7 +6,7 @@ class EntriesModel extends Equatable {
   final String clientName;
   final String currentLocation;
   final String phoneNumber;
-  final int price;
+  final num price;
   final int quantity;
 
   const EntriesModel({
