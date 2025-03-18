@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:super_ge/core/services/app_prefs.dart';
 import 'package:super_ge/core/services/firebase_service.dart';
 import 'package:super_ge/models/collections_model.dart';
-import 'package:super_ge/views/login_view.dart';
 
 class MandobHomeController extends GetxController {
   List<CollectionsModel> categories = [];
@@ -42,18 +41,5 @@ class MandobHomeController extends GetxController {
       );
     }
     update();
-  }
-
-  void logout() {
-    Get.defaultDialog(
-      title: 'تسجيل الخروج',
-      middleText: 'هل انت متاكد من تسجيل الخروج؟',
-      textConfirm: 'نعم',
-      textCancel: 'لا',
-      onConfirm: () {
-        AppPreferences.instance.clear();
-        Get.offAll(() => const LoginView());
-      },
-    );
   }
 }

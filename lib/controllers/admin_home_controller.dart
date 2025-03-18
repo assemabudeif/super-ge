@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:super_ge/core/services/app_prefs.dart';
 import 'package:super_ge/core/services/firebase_service.dart';
 import 'package:super_ge/models/collections_model.dart';
-import 'package:super_ge/views/login_view.dart';
 
 class AdminHomeController extends GetxController {
   List<CollectionsModel> categories = [];
@@ -77,10 +76,5 @@ class AdminHomeController extends GetxController {
         update();
       },
     );
-  }
-
-  void logout() {
-    AppPreferences.instance.clear();
-    Get.offAll(() => const LoginView());
   }
 }

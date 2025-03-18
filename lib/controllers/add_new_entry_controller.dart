@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:super_ge/core/services/firebase_service.dart';
 import 'package:super_ge/models/collections_model.dart';
 import 'package:super_ge/models/entries_model.dart';
+import 'package:super_ge/views/mandob_home.dart';
 
 import 'mandob_home_controller.dart';
 
@@ -69,8 +71,6 @@ class AddNewEntryController extends GetxController {
           'quantity': newQuantity,
         });
 
-        Get.back();
-
         Get.snackbar(
           'تم',
           'تم اضافة المدخل بنجاح',
@@ -79,6 +79,7 @@ class AddNewEntryController extends GetxController {
         );
         isLoading = false;
         update();
+        submitDialog();
         Get.put(MandobHomeController()).getCollections();
       } on FirebaseException catch (e) {
         isLoading = false;
@@ -90,6 +91,29 @@ class AddNewEntryController extends GetxController {
         );
       }
     }
+  }
+
+  submitDialog() {
+    Get.defaultDialog(
+      title: "تمت الاضافه",
+      middleText: "تم اضافة المدخل بنجاح",
+      textConfirm: "حسنا",
+      textCancel: "مشاركة علي الواتساب",
+      onConfirm: () => Get.offAll(() => const MandobHome()),
+      onCancel: () {
+        Share.share(
+          """
+اسم العميل : ${clientNameController.text.trim()}
+رقم الجوال : ${phoneController.text.trim()}
+العنوان : ${addressController.text.trim()}
+الموقع الحالي : ${currentLocationController.text.trim()}
+الكمية : ${quantityController.text.trim()}
+السعر : ${priceController.text.trim()}
+""",
+          subject: "مدخل جديد",
+        );
+      },
+    );
   }
 
   @override

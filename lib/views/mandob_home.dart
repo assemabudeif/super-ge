@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:super_ge/core/functions/logout.dart';
 import 'package:super_ge/core/theme/app_colors.dart';
 import 'package:super_ge/views/all_notes.dart';
 
@@ -68,7 +69,7 @@ class MandobHome extends GetView<MandobHomeController> {
               ListTile(
                 title: const Text('تسجيل الخروج'),
                 onTap: () {
-                  controller.logout();
+                  logout();
                 },
               ),
             ],

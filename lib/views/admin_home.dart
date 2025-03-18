@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:super_ge/controllers/admin_home_controller.dart';
+import 'package:super_ge/core/functions/logout.dart';
 import 'package:super_ge/core/theme/app_colors.dart';
 import 'package:super_ge/views/add_new_collection.dart';
 import 'package:super_ge/views/all_mandob.dart';
@@ -77,7 +78,7 @@ class AdminHome extends StatelessWidget {
                 ListTile(
                   title: const Text('تسجيل الخروج'),
                   onTap: () {
-                    controller.logout();
+                    logout();
                   },
                 ),
               ],
