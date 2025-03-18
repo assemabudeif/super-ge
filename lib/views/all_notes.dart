@@ -36,7 +36,8 @@ class _AllNotesState extends State<AllNotes> with TickerProviderStateMixin {
           child: Scaffold(
             appBar: AppBar(
               title: const Text('الملاحظات'),
-              bottom: const TabBar(
+              bottom: TabBar(
+                controller: _tabController,
                 tabs: [
                   Tab(
                     text: 'عملاء',
