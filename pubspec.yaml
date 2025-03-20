@@ -20,6 +20,9 @@ dependencies:
   equatable: ^2.0.7
   shared_preferences: ^2.5.2
   share_plus: ^10.1.4
+  excel: ^4.0.6
+  path_provider: ^2.1.5
+  font_awesome_flutter: ^10.8.0
 
 dev_dependencies:
   flutter_test:

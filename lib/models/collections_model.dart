@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:super_ge/models/entries_model.dart';
 
+// ignore: must_be_immutable
 class CollectionsModel extends Equatable {
   final String? id;
   final String name;
@@ -7,14 +9,17 @@ class CollectionsModel extends Equatable {
   final num gomlahPrice;
   final num quantity;
   final num startSellPrice;
+  num? profits;
+  List<EntriesModel> entries = [];
 
-  const CollectionsModel({
+  CollectionsModel({
     this.id,
     required this.endSellPrice,
     required this.gomlahPrice,
     required this.name,
     required this.quantity,
     required this.startSellPrice,
+    this.profits,
   });
 
   factory CollectionsModel.fromJson(Map<String, dynamic> json, String id) =>

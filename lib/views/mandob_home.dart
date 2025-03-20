@@ -176,26 +176,16 @@ class MandobHome extends GetView<MandobHomeController> {
                                         category.startSellPrice,
                                       ),
                                       _buildDetailItem(
+                                        'الكمية',
+                                        category.quantity,
+                                      ),
+                                      _buildDetailItem(
                                         'اعلى سعر',
                                         category.endSellPrice,
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 16),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      _buildDetailItem(
-                                        'سعر الجملة',
-                                        category.gomlahPrice,
-                                      ),
-                                      _buildDetailItem(
-                                        'الكمية',
-                                        category.quantity,
-                                      ),
-                                    ],
-                                  ),
+                                  const SizedBox(height: 4),
                                 ],
                               ),
                             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:super_ge/controllers/admin_home_controller.dart';
 import 'package:super_ge/core/functions/logout.dart';
@@ -87,19 +88,61 @@ class AdminHome extends StatelessWidget {
           appBar: AppBar(
             title: const Text('لوحة التحكم'),
             centerTitle: true,
+            actions: [
+              if (controller.exporting)
+                const Center(
+                  child: CircularProgressIndicator(),
+                )
+              else
+                IconButton(
+                  icon: Row(
+                    children: [
+                      Text(
+                        "انشاء اكسيل",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      Icon(
+                        FontAwesomeIcons.fileCsv,
+                      ),
+                    ],
+                  ),
+                  onPressed: () {
+                    controller.exportExcel();
+                  },
+                ),
+            ],
           ),
           body: CustomScrollView(
             slivers: [
               SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    "الاصناف",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "الاصناف",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        "الارباح الكليه ${num.parse(controller.allProfits()).toStringAsFixed(2)} جنيه",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -224,6 +267,10 @@ class AdminHome extends StatelessWidget {
                                       _buildDetailItem(
                                         'سعر الجملة',
                                         category.gomlahPrice,
+                                      ),
+                                      _buildDetailItem(
+                                        "الارباح",
+                                        category.profits ?? 0,
                                       ),
                                       _buildDetailItem(
                                         'الكمية',

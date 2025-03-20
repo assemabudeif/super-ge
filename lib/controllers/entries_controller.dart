@@ -48,7 +48,7 @@ class EntriesController extends GetxController {
   String allProfits() {
     num sum = 0;
     for (var element in entries) {
-      sum += (element.price - gomlahPrice);
+      sum += (element.price - gomlahPrice) * element.quantity;
     }
     return sum.toString();
   }
