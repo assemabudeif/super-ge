@@ -7,6 +7,7 @@ import 'package:super_ge/core/theme/app_colors.dart';
 import 'package:super_ge/views/add_new_collection.dart';
 import 'package:super_ge/views/all_mandob.dart';
 import 'package:super_ge/views/all_notes.dart';
+import 'package:super_ge/views/bills_view.dart';
 import 'package:super_ge/views/entries_view.dart';
 
 class AdminHome extends StatelessWidget {
@@ -73,6 +74,13 @@ class AdminHome extends StatelessWidget {
                   title: const Text('الملاحظات'),
                   onTap: () {
                     Get.to(() => const AllNotes());
+                  },
+                ),
+                Divider(),
+                ListTile(
+                  title: const Text('الفواتير'),
+                  onTap: () {
+                    Get.to(() => const BillsView());
                   },
                 ),
                 Divider(),

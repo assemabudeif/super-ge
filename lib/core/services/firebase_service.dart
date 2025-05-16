@@ -9,4 +9,6 @@ class FirebaseService {
   static final usersCollection = db.collection('users');
 
   static final notesCollection = db.collection('notes');
+
+  static final billsCollection = db.collection('bills');
 }

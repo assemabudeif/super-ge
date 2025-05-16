@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:super_ge/core/services/app_prefs.dart';
+import 'package:super_ge/views/add_new_client_entry.dart';
 import 'package:super_ge/views/admin_home.dart';
 import 'package:super_ge/views/login_view.dart';
 import 'package:super_ge/views/mandob_home.dart';
