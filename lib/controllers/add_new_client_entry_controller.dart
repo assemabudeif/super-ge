@@ -322,20 +322,31 @@ class AddNewClientEntryController extends GetxController {
   }
 
   Future<void> saveBillToFirebase() async {
-    await FirebaseService.billsCollection.add({
-      'timestamp': DateTime.now().millisecondsSinceEpoch,
-      'client_name': clientNameController.text,
-      'phone': phoneController.text,
-      'address': addressController.text,
-      'current_location': currentLocationController.text,
-      'collections': selectedCollections.map((e) {
-        return {
-          'name': e.name,
-          'quantity': int.parse(quantityControllers[e.id!]!.text),
-          'price': double.parse(priceControllers[e.id!]!.text),
-        };
-      }).toList(),
-    });
+    await FirebaseService.billsCollection.add(
+      {
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+        'client_name': clientNameController.text,
+        'phone': phoneController.text,
+        'address': addressController.text,
+        'current_location': currentLocationController.text,
+        'collections': selectedCollections.map((e) {
+          return {
+            'name': e.name,
+            'quantity': int.parse(quantityControllers[e.id!]!.text),
+            'price': double.parse(priceControllers[e.id!]!.text),
+          };
+        }).toList(),
+        'mandob_name': Get.put(MandobHomeController()).name,
+        'total': selectedCollections.fold<double>(
+          0,
+          (previousValue, element) =>
+              previousValue +
+              double.parse(quantityControllers[element.id!]!.text) *
+                  double.parse(priceControllers[element.id!]!.text),
+        ),
+        'bill_date': DateTime.now().toLocal(),
+      },
+    );
   }
 
   @override

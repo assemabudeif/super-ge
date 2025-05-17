@@ -124,6 +124,24 @@ class BillsView extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          const Icon(Icons.attach_money,
+                              size: 16, color: Colors.green),
+                          const SizedBox(width: 6),
+                          Text('الاجمالي: ${bill['total']}'),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          const Icon(Icons.person_pin,
+                              size: 16, color: Colors.blueGrey),
+                          const SizedBox(width: 6),
+                          Text('مندوب: ${bill['mandob_name']}'),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton.icon(
