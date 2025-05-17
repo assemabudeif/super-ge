@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:super_ge/controllers/entries_controller.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../models/entries_model.dart';
@@ -38,14 +40,26 @@ class EntryWidget extends StatelessWidget {
                 end: Alignment.bottomRight,
               ),
             ),
-            child: Text(
-              model.clientName,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-              textAlign: TextAlign.center,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    model.clientName,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.white),
+                  onPressed: () {
+                    Get.put(EntriesController()).deleteEntry(model.id!);
+                  },
+                ),
+              ],
             ),
           ),
           // Details section

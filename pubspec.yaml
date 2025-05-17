@@ -58,3 +58,7 @@ flutter:
           weight: 300
         - asset: assets/fonts/Cairo-ExtraLight.ttf
           weight: 200
+
+    - family: HacenTunisia
+      fonts:
+        - asset: assets/fonts/HacenTunisia.ttf

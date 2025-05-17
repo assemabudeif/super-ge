@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -9,6 +10,8 @@ import 'package:super_ge/core/services/firebase_service.dart';
 import 'package:super_ge/models/collections_model.dart';
 import 'package:super_ge/models/entries_model.dart';
 import 'package:pdf/widgets.dart' as pw;
+
+import 'mandob_home_controller.dart';
 
 class AddNewClientEntryController extends GetxController {
   final formKey = GlobalKey<FormState>();
@@ -186,6 +189,11 @@ class AddNewClientEntryController extends GetxController {
 
     pdfDoc.addPage(
       pw.Page(
+        theme: pw.ThemeData.withFont(
+          base: pw.Font.ttf(
+            await rootBundle.load("assets/fonts/HacenTunisia.ttf"),
+          ),
+        ),
         build: (context) => pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
@@ -195,6 +203,8 @@ class AddNewClientEntryController extends GetxController {
             pw.Text('العنوان: $address', style: pw.TextStyle(fontSize: 20)),
             pw.Text('الموقع الحالي: $currentLocation',
                 style: pw.TextStyle(fontSize: 20)),
+            pw.SizedBox(height: 20),
+            pw.Text('تفاصيل الفاتورة', style: pw.TextStyle(fontSize: 20)),
             pw.SizedBox(height: 20),
             pw.Table.fromTextArray(
               headers: ['الاسم', 'الكمية', 'السعر'],
@@ -209,6 +219,28 @@ class AddNewClientEntryController extends GetxController {
               headerStyle:
                   pw.TextStyle(fontSize: 15, fontWeight: pw.FontWeight.bold),
             ),
+            pw.SizedBox(height: 20),
+            pw.Text(
+              'المجموع: ${collections.fold<double>(
+                0,
+                (previousValue, element) =>
+                    previousValue +
+                    double.parse(quantityControllers[element.id!]!.text) *
+                        double.parse(priceControllers[element.id!]!.text),
+              )}',
+              style: pw.TextStyle(fontSize: 20),
+            ),
+            pw.SizedBox(height: 20),
+            pw.Text(
+              'تاريخ الفاتورة: ${DateTime.now().toLocal()}',
+              style: pw.TextStyle(fontSize: 20),
+            ),
+            pw.SizedBox(height: 20),
+            pw.Text(
+              'المندوب: ${Get.put(MandobHomeController()).name}',
+              style: pw.TextStyle(fontSize: 20),
+            ),
+            pw.SizedBox(height: 20),
           ],
         ),
       ),
@@ -224,12 +256,13 @@ class AddNewClientEntryController extends GetxController {
     // final uri = Uri.parse(file.path);
     await SharePlus.instance.share(
       ShareParams(
-          title: 'فاتورة',
-          text: 'فاتورة جديدة',
-          subject: 'فاتورة جديدة',
-          files: [
-            XFile(file.path),
-          ]),
+        title: '${clientNameController.text}فاتورة ',
+        text: 'فاتورة جديدة',
+        subject: 'فاتورة جديدة',
+        files: [
+          XFile(file.path),
+        ],
+      ),
     );
   }
 

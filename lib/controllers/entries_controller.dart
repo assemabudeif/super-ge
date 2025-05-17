@@ -43,6 +43,43 @@ class EntriesController extends GetxController {
       );
     }
     update();
+    update();
+  }
+
+  Future<void> deleteEntry(String id) async {
+    Get.defaultDialog(
+      title: 'حذف القائمة',
+      middleText: 'هل انت متاكد من حذف هذه القائمة؟',
+      textConfirm: 'نعم',
+      textCancel: 'لا',
+      onConfirm: () async {
+        Get.back();
+        isLoading = true;
+        update();
+        try {
+          await FirebaseService.entriesCollection(collectionId)
+              .doc(id)
+              .delete();
+          entries.removeWhere((element) => element.id == id);
+          isLoading = false;
+          Get.snackbar(
+            'تم',
+            'تم حذف القائمة بنجاح',
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
+        } on FirebaseException catch (e) {
+          isLoading = false;
+          Get.snackbar(
+            'خطأ',
+            e.message.toString(),
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+        }
+        update();
+      },
+    );
   }
 
   String allProfits() {
