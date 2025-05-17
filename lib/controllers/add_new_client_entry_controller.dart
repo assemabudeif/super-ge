@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:super_ge/core/services/firebase_service.dart';
 import 'package:super_ge/models/collections_model.dart';
@@ -194,6 +195,7 @@ class AddNewClientEntryController extends GetxController {
             await rootBundle.load("assets/fonts/HacenTunisia.ttf"),
           ),
         ),
+        textDirection: pw.TextDirection.rtl,
         build: (context) => pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
@@ -206,18 +208,70 @@ class AddNewClientEntryController extends GetxController {
             pw.SizedBox(height: 20),
             pw.Text('تفاصيل الفاتورة', style: pw.TextStyle(fontSize: 20)),
             pw.SizedBox(height: 20),
-            pw.Table.fromTextArray(
-              headers: ['الاسم', 'الكمية', 'السعر'],
-              data: collections.map((e) {
-                return [
-                  e.name,
-                  quantityControllers[e.id!]!.text,
-                  priceControllers[e.id!]!.text,
-                ];
-              }).toList(),
-              cellStyle: pw.TextStyle(fontSize: 15),
-              headerStyle:
-                  pw.TextStyle(fontSize: 15, fontWeight: pw.FontWeight.bold),
+            pw.Table(
+              border: pw.TableBorder.all(),
+              defaultVerticalAlignment: pw.TableCellVerticalAlignment.middle,
+              children: [
+                // رأس الجدول
+                pw.TableRow(
+                  decoration: pw.BoxDecoration(color: PdfColors.grey300),
+                  children: [
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8),
+                      child: pw.Text('الاسم',
+                          style: pw.TextStyle(
+                              fontSize: 15, fontWeight: pw.FontWeight.bold),
+                          textDirection: pw.TextDirection.rtl),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8),
+                      child: pw.Text('الكمية',
+                          style: pw.TextStyle(
+                              fontSize: 15, fontWeight: pw.FontWeight.bold),
+                          textDirection: pw.TextDirection.rtl),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8),
+                      child: pw.Text('السعر',
+                          style: pw.TextStyle(
+                              fontSize: 15, fontWeight: pw.FontWeight.bold),
+                          textDirection: pw.TextDirection.rtl),
+                    ),
+                  ],
+                ),
+
+                // البيانات
+                ...collections.map(
+                  (e) {
+                    return pw.TableRow(
+                      children: [
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            e.name,
+                            style: pw.TextStyle(fontSize: 14),
+                            textDirection: pw.TextDirection.rtl,
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            quantityControllers[e.id!]!.text,
+                            style: pw.TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            priceControllers[e.id!]!.text,
+                            style: pw.TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
             ),
             pw.SizedBox(height: 20),
             pw.Text(
@@ -251,14 +305,15 @@ class AddNewClientEntryController extends GetxController {
 
   Future<void> shareBillAsPdf(Uint8List pdf) async {
     final tempDir = await getTemporaryDirectory();
-    final file = await File('${tempDir.path}/bill.pdf').create();
+    final file = await File(
+      '${tempDir.path} الفاتورة لصالح:${clientNameController.text}/.pdf',
+    ).create();
     await file.writeAsBytes(pdf);
     // final uri = Uri.parse(file.path);
     await SharePlus.instance.share(
       ShareParams(
-        title: '${clientNameController.text}فاتورة ',
+        title: 'الفاتورة لصالح: ${clientNameController.text}',
         text: 'فاتورة جديدة',
-        subject: 'فاتورة جديدة',
         files: [
           XFile(file.path),
         ],
