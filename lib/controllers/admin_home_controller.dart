@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:super_ge/core/services/app_prefs.dart';
 import 'package:super_ge/core/services/firebase_service.dart';
 import 'package:super_ge/models/collections_model.dart';
@@ -133,6 +134,21 @@ class AdminHomeController extends GetxController {
   }
 
   exportExcel() async {
+    PermissionStatus permissionStatus = await Permission.storage.status;
+    if (permissionStatus.isDenied) {
+      await Permission.storage.request();
+    } else if (permissionStatus.isPermanentlyDenied) {
+      await openAppSettings();
+    }
+    if (permissionStatus.isDenied) {
+      Get.snackbar(
+        'خطأ',
+        'الرجاء منك تفعيل الإذن للوصول إلى الذاكرة الخارجية',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
     exporting = true;
     update();
     try {

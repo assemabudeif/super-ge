@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:super_ge/core/services/firebase_service.dart';
 import 'package:super_ge/models/collections_model.dart';
@@ -186,6 +187,22 @@ class AddNewClientEntryController extends GetxController {
     String address,
     String currentLocation,
   ) async {
+    PermissionStatus permissionStatus = await Permission.storage.status;
+    if (permissionStatus.isDenied) {
+      await Permission.storage.request();
+    } else if (permissionStatus.isPermanentlyDenied) {
+      await openAppSettings();
+    }
+    if (permissionStatus.isDenied) {
+      Get.snackbar(
+        'خطأ',
+        'الرجاء منك تفعيل الإذن للوصول إلى الذاكرة الخارجية',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return Uint8List.fromList([]);
+    }
+
     final pdfDoc = pw.Document();
 
     pdfDoc.addPage(
