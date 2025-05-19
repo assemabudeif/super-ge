@@ -187,20 +187,21 @@ class AddNewClientEntryController extends GetxController {
     String address,
     String currentLocation,
   ) async {
-    PermissionStatus permissionStatus = await Permission.storage.status;
-    if (permissionStatus.isDenied) {
-      await Permission.storage.request();
-    } else if (permissionStatus.isPermanentlyDenied) {
-      await openAppSettings();
-    }
-    if (permissionStatus.isDenied) {
-      Get.snackbar(
-        'خطأ',
-        'الرجاء منك تفعيل الإذن للوصول إلى الذاكرة الخارجية',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return Uint8List.fromList([]);
+    PermissionStatus manageStatus =
+        await Permission.manageExternalStorage.status;
+
+    if (!manageStatus.isGranted) {
+      await Permission.manageExternalStorage.request();
+
+      if (!manageStatus.isGranted) {
+        Get.snackbar(
+          'خطأ',
+          'لا يوجد صلاحية للتخزين على الهاتف',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return Uint8List.fromList([]);
+      }
     }
 
     final pdfDoc = pw.Document();

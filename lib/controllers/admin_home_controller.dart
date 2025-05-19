@@ -134,24 +134,39 @@ class AdminHomeController extends GetxController {
   }
 
   exportExcel() async {
-    PermissionStatus permissionStatus = await Permission.storage.status;
-    if (permissionStatus.isDenied) {
-      await Permission.storage.request();
-    } else if (permissionStatus.isPermanentlyDenied) {
-      await openAppSettings();
-    }
-    if (permissionStatus.isDenied) {
-      Get.snackbar(
-        'خطأ',
-        'الرجاء منك تفعيل الإذن للوصول إلى الذاكرة الخارجية',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return;
-    }
-    exporting = true;
-    update();
     try {
+      // Get current date and time in Arabic format
+      final now = DateTime.now();
+      final dateStr =
+          '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+      final timeStr =
+          '${now.hour.toString().padLeft(2, '0')}-${now.minute.toString().padLeft(2, '0')}';
+
+      final fileName = 'تقرير_العملاء_$dateStr - $timeStr.xlsx';
+
+      PermissionStatus manageStatus =
+          await Permission.manageExternalStorage.status;
+
+      log('Initial Manage Status: $manageStatus');
+      log((await Permission.manageExternalStorage.request()).name);
+
+      if (!manageStatus.isGranted) {
+        await Permission.manageExternalStorage.request();
+
+        if (!manageStatus.isGranted) {
+          Get.snackbar(
+            'خطأ',
+            'لا يوجد صلاحية للتخزين على الهاتف',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+          return;
+        }
+      }
+
+      exporting = true;
+      update();
+
       var excel = Excel.createExcel();
       final List<String> headers = [
         'اسم العميل',
@@ -194,7 +209,7 @@ class AdminHomeController extends GetxController {
       var bytes = excel.save();
       var downloadPath = Directory('/storage/emulated/0/Download');
 
-      File('${downloadPath.path}/تقرير العملاء.xlsx').writeAsBytes(bytes!);
+      File('${downloadPath.path}/$fileName').writeAsBytes(bytes!);
       exporting = false;
       Get.snackbar(
         'تم',
@@ -202,7 +217,7 @@ class AdminHomeController extends GetxController {
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
-      log('${downloadPath.path}/تقرير العملاء.xlsx');
+      log('${downloadPath.path}/$fileName');
       update();
     } on FirebaseException catch (e) {
       exporting = false;
