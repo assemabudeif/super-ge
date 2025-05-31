@@ -116,7 +116,18 @@ class AddNewClientEntry extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 16),
+                      // ElevatedButton.icon(
+                      //   onPressed: () {
+                      //     controller.clearFormAndRefresh();
+                      //   },
+                      //   icon: const Icon(
+                      //     Icons.refresh,
+                      //     color: Colors.white,
+                      //   ),
+                      //   label: const Text('تحديث التصنيفات'),
+                      // ),
+                      const SizedBox(height: 16),
                       // Collections Section
                       Card(
                         elevation: 4,

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -97,7 +99,7 @@ class AddNewClientEntryController extends GetxController {
       await _shareBill();
 
       // Clear form and refresh data
-      await _clearFormAndRefresh();
+      // await _clearFormAndRefresh();
 
       _showSuccessSnackbar('تم إضافة المدخلات بنجاح');
     } catch (e) {
@@ -343,6 +345,7 @@ class AddNewClientEntryController extends GetxController {
       if (bill.isNotEmpty) {
         await shareBillAsPdf(bill);
         _showSuccessSnackbar('تم مشاركة الفاتورة بنجاح');
+        _clearFormAndRefresh();
       }
     } catch (e) {
       _showErrorSnackbar('خطأ في مشاركة الفاتورة: ${e.toString()}');
@@ -368,6 +371,7 @@ class AddNewClientEntryController extends GetxController {
       if (bill.isNotEmpty) {
         await _saveToDownloads(bill);
         _showSuccessSnackbar('تم حفظ الفاتورة في مجلد التحميلات');
+        _clearFormAndRefresh();
       }
     } catch (e) {
       _showErrorSnackbar('خطأ في حفظ الفاتورة: ${e.toString()}');
@@ -436,10 +440,9 @@ class AddNewClientEntryController extends GetxController {
         await downloadsDir.create(recursive: true);
       }
 
-      final clientName =
-          clientNameController.text.trim().replaceAll(RegExp(r'[^\w\s-]'), '');
+      final clientName = clientNameController.text.trim();
       final fileName =
-          'فاتورة_${clientName}_${DateTime.now().millisecondsSinceEpoch}.pdf';
+          'فاتورة_${clientName}_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.pdf';
       final file = File('$downloadsPath/$fileName');
 
       await file.writeAsBytes(pdf);
@@ -453,10 +456,9 @@ class AddNewClientEntryController extends GetxController {
   Future<void> _shareViaSpecificApp(Uint8List pdf, String packageName) async {
     try {
       final tempDir = await getTemporaryDirectory();
-      final clientName =
-          clientNameController.text.trim().replaceAll(RegExp(r'[^\w\s-]'), '');
+      final clientName = clientNameController.text.trim();
       final fileName =
-          'فاتورة_${clientName}_${DateTime.now().millisecondsSinceEpoch}.pdf';
+          'فاتورة_${clientName}_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.pdf';
       final file = File('${tempDir.path}/$fileName');
 
       await file.writeAsBytes(pdf);
@@ -469,6 +471,7 @@ class AddNewClientEntryController extends GetxController {
       );
 
       _showSuccessSnackbar('تم مشاركة الفاتورة بنجاح');
+      _clearFormAndRefresh();
     } catch (e) {
       _showErrorSnackbar('خطأ في المشاركة: ${e.toString()}');
     }
@@ -508,6 +511,7 @@ class AddNewClientEntryController extends GetxController {
       );
 
       _showSuccessSnackbar('تم إعداد البريد الإلكتروني بنجاح');
+      _clearFormAndRefresh();
     } catch (e) {
       _showErrorSnackbar('خطأ في إعداد البريد الإلكتروني: ${e.toString()}');
     }
@@ -720,13 +724,13 @@ class AddNewClientEntryController extends GetxController {
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
                   pw.Text(
-                    _formatPrice(total),
+                    'المجموع الكلي: ',
                     style: pw.TextStyle(
                         fontSize: 20, fontWeight: pw.FontWeight.bold),
                     textDirection: pw.TextDirection.rtl,
                   ),
                   pw.Text(
-                    'المجموع الكلي:',
+                    _formatPrice(total),
                     style: pw.TextStyle(
                         fontSize: 20, fontWeight: pw.FontWeight.bold),
                     textDirection: pw.TextDirection.rtl,
@@ -734,12 +738,12 @@ class AddNewClientEntryController extends GetxController {
                 ],
               ),
               pw.SizedBox(height: 5),
-              pw.Text(
-                'المبلغ بالكلمات: ${_formatPriceInWords(total)}',
-                style:
-                    pw.TextStyle(fontSize: 14, fontStyle: pw.FontStyle.italic),
-                textDirection: pw.TextDirection.rtl,
-              ),
+              // pw.Text(
+              //   'المبلغ بالكلمات: ${_formatPriceInWords(total)}',
+              //   style:
+              //       pw.TextStyle(fontSize: 14, fontStyle: pw.FontStyle.italic),
+              //   textDirection: pw.TextDirection.rtl,
+              // ),
             ],
           ),
         ),
@@ -807,7 +811,7 @@ class AddNewClientEntryController extends GetxController {
           pw.Expanded(
             flex: 3,
             child: pw.Text(
-              value,
+              label,
               style: const pw.TextStyle(fontSize: 14),
               textDirection: pw.TextDirection.rtl,
             ),
@@ -815,7 +819,7 @@ class AddNewClientEntryController extends GetxController {
           pw.Expanded(
             flex: 1,
             child: pw.Text(
-              label,
+              value,
               style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
               textDirection: pw.TextDirection.rtl,
             ),
@@ -844,17 +848,19 @@ class AddNewClientEntryController extends GetxController {
             _buildTableCell('الكمية', isHeader: true),
             _buildTableCell('سعر الوحدة (ج.م)', isHeader: true),
             _buildTableCell('المجموع (ج.م)', isHeader: true),
-          ],
+          ].reversed.toList(),
         ),
         // Data rows
         ...collections.map((collection) {
           if (collection.id == null) {
-            return pw.TableRow(children: [
-              _buildTableCell(''),
-              _buildTableCell(''),
-              _buildTableCell(''),
-              _buildTableCell(''),
-            ]);
+            return pw.TableRow(
+              children: [
+                _buildTableCell(''),
+                _buildTableCell(''),
+                _buildTableCell(''),
+                _buildTableCell(''),
+              ],
+            );
           }
 
           final quantity = int.parse(quantityControllers[collection.id!]!.text);
@@ -867,7 +873,7 @@ class AddNewClientEntryController extends GetxController {
               _buildTableCell(quantity.toString()),
               _buildTableCell(price.toStringAsFixed(2)),
               _buildTableCell(subtotal.toStringAsFixed(2)),
-            ],
+            ].reversed.toList(),
           );
         }),
       ],
@@ -907,10 +913,10 @@ class AddNewClientEntryController extends GetxController {
   Future<void> shareBillAsPdf(Uint8List pdf) async {
     try {
       final tempDir = await getTemporaryDirectory();
-      final clientName =
-          clientNameController.text.trim().replaceAll(RegExp(r'[^\w\s-]'), '');
+      final clientName = clientNameController.text.trim();
       final fileName =
-          'فاتورة_${clientName}_${DateTime.now().millisecondsSinceEpoch}.pdf';
+          'فاتورة_${clientName}_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.pdf';
+      'فاتورة_${clientName}_${DateTime.now().millisecondsSinceEpoch}.pdf';
       final file = File('${tempDir.path}/$fileName');
 
       await file.writeAsBytes(pdf);
