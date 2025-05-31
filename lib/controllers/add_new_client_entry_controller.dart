@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
@@ -33,6 +34,8 @@ class AddNewClientEntryController extends GetxController {
     super.onInit();
     getCollections();
   }
+
+  double get totalPrice => _calculateTotal(selectedCollections);
 
   Future<void> getCollections() async {
     try {
@@ -176,6 +179,159 @@ class AddNewClientEntryController extends GetxController {
 
   Future<void> _shareBill() async {
     try {
+      await saveBillToFirebase();
+      await _showShareDialog();
+    } catch (e) {
+      _showErrorSnackbar('خطأ في إنشاء الفاتورة: ${e.toString()}');
+    }
+  }
+
+  Future<void> _showShareDialog() async {
+    await Get.dialog(
+      AlertDialog(
+        title: const Text(
+          'مشاركة الفاتورة',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'اختر طريقة مشاركة الفاتورة:',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 20),
+            _buildShareOption(
+              icon: Icons.share,
+              title: 'مشاركة الفاتورة',
+              subtitle: 'مشاركة ملف PDF عبر التطبيقات',
+              onTap: () async {
+                Get.back();
+                await _shareAsPdf();
+              },
+            ),
+            const SizedBox(height: 10),
+            _buildShareOption(
+              icon: Icons.save_alt,
+              title: 'حفظ في الهاتف',
+              subtitle: 'حفظ الفاتورة في ذاكرة الهاتف',
+              onTap: () async {
+                Get.back();
+                await _saveToDevice();
+              },
+            ),
+            const SizedBox(height: 10),
+            _buildShareOption(
+              icon: FontAwesomeIcons.whatsapp,
+              title: 'مشاركة عبر واتساب',
+              subtitle: 'إرسال الفاتورة مباشرة عبر واتساب',
+              onTap: () async {
+                Get.back();
+                await _shareViaWhatsApp();
+              },
+            ),
+            const SizedBox(height: 10),
+            _buildShareOption(
+              icon: Icons.email,
+              title: 'إرسال عبر البريد الإلكتروني',
+              subtitle: 'إرسال الفاتورة كمرفق في الإيميل',
+              onTap: () async {
+                Get.back();
+                await _shareViaEmail();
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text(
+              'إلغاء',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+        ],
+      ),
+      barrierDismissible: true,
+    );
+  }
+
+  Widget _buildShareOption({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Icon(
+                icon,
+                color: Colors.blue.shade600,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: Colors.grey.shade400,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _shareAsPdf() async {
+    try {
+      isLoading = true;
+      update();
+
       final bill = await createBill(
         selectedCollections,
         clientNameController.text.trim(),
@@ -186,10 +342,174 @@ class AddNewClientEntryController extends GetxController {
 
       if (bill.isNotEmpty) {
         await shareBillAsPdf(bill);
-        await saveBillToFirebase();
+        _showSuccessSnackbar('تم مشاركة الفاتورة بنجاح');
       }
     } catch (e) {
-      _showErrorSnackbar('خطأ في إنشاء الفاتورة: ${e.toString()}');
+      _showErrorSnackbar('خطأ في مشاركة الفاتورة: ${e.toString()}');
+    } finally {
+      isLoading = false;
+      update();
+    }
+  }
+
+  Future<void> _saveToDevice() async {
+    try {
+      isLoading = true;
+      update();
+
+      final bill = await createBill(
+        selectedCollections,
+        clientNameController.text.trim(),
+        phoneController.text.trim(),
+        addressController.text.trim(),
+        currentLocationController.text.trim(),
+      );
+
+      if (bill.isNotEmpty) {
+        await _saveToDownloads(bill);
+        _showSuccessSnackbar('تم حفظ الفاتورة في مجلد التحميلات');
+      }
+    } catch (e) {
+      _showErrorSnackbar('خطأ في حفظ الفاتورة: ${e.toString()}');
+    } finally {
+      isLoading = false;
+      update();
+    }
+  }
+
+  Future<void> _shareViaWhatsApp() async {
+    try {
+      isLoading = true;
+      update();
+
+      final bill = await createBill(
+        selectedCollections,
+        clientNameController.text.trim(),
+        phoneController.text.trim(),
+        addressController.text.trim(),
+        currentLocationController.text.trim(),
+      );
+
+      if (bill.isNotEmpty) {
+        await _shareViaSpecificApp(bill, 'com.whatsapp');
+      }
+    } catch (e) {
+      _showErrorSnackbar('خطأ في مشاركة الفاتورة عبر واتساب: ${e.toString()}');
+    } finally {
+      isLoading = false;
+      update();
+    }
+  }
+
+  Future<void> _shareViaEmail() async {
+    try {
+      isLoading = true;
+      update();
+
+      final bill = await createBill(
+        selectedCollections,
+        clientNameController.text.trim(),
+        phoneController.text.trim(),
+        addressController.text.trim(),
+        currentLocationController.text.trim(),
+      );
+
+      if (bill.isNotEmpty) {
+        await _shareAsEmail(bill);
+      }
+    } catch (e) {
+      _showErrorSnackbar(
+          'خطأ في إرسال الفاتورة عبر البريد الإلكتروني: ${e.toString()}');
+    } finally {
+      isLoading = false;
+      update();
+    }
+  }
+
+  Future<void> _saveToDownloads(Uint8List pdf) async {
+    try {
+      final directory = await getExternalStorageDirectory();
+      final downloadsPath = '${directory?.path}/Download';
+      final downloadsDir = Directory(downloadsPath);
+
+      if (!await downloadsDir.exists()) {
+        await downloadsDir.create(recursive: true);
+      }
+
+      final clientName =
+          clientNameController.text.trim().replaceAll(RegExp(r'[^\w\s-]'), '');
+      final fileName =
+          'فاتورة_${clientName}_${DateTime.now().millisecondsSinceEpoch}.pdf';
+      final file = File('$downloadsPath/$fileName');
+
+      await file.writeAsBytes(pdf);
+
+      _showSuccessSnackbar('تم حفظ الفاتورة في: $downloadsPath');
+    } catch (e) {
+      _showErrorSnackbar('خطأ في حفظ الملف: ${e.toString()}');
+    }
+  }
+
+  Future<void> _shareViaSpecificApp(Uint8List pdf, String packageName) async {
+    try {
+      final tempDir = await getTemporaryDirectory();
+      final clientName =
+          clientNameController.text.trim().replaceAll(RegExp(r'[^\w\s-]'), '');
+      final fileName =
+          'فاتورة_${clientName}_${DateTime.now().millisecondsSinceEpoch}.pdf';
+      final file = File('${tempDir.path}/$fileName');
+
+      await file.writeAsBytes(pdf);
+
+      await Share.shareXFiles(
+        [XFile(file.path)],
+        text:
+            'فاتورة جديدة لصالح: ${clientNameController.text}\n\nالمجموع: ${_formatPrice(_calculateTotal(selectedCollections))}',
+        subject: 'فاتورة - ${clientNameController.text}',
+      );
+
+      _showSuccessSnackbar('تم مشاركة الفاتورة بنجاح');
+    } catch (e) {
+      _showErrorSnackbar('خطأ في المشاركة: ${e.toString()}');
+    }
+  }
+
+  Future<void> _shareAsEmail(Uint8List pdf) async {
+    try {
+      final tempDir = await getTemporaryDirectory();
+      final clientName =
+          clientNameController.text.trim().replaceAll(RegExp(r'[^\w\s-]'), '');
+      final fileName =
+          'فاتورة_${clientName}_${DateTime.now().millisecondsSinceEpoch}.pdf';
+      final file = File('${tempDir.path}/$fileName');
+
+      await file.writeAsBytes(pdf);
+
+      final total = _calculateTotal(selectedCollections);
+      final emailBody = '''
+مرحباً ${clientNameController.text},
+
+نشكركم لتعاملكم معنا. يرجى العلم بأن فاتورتكم جاهزة.
+
+تفاصيل الفاتورة:
+- اسم العميل: ${clientNameController.text}
+- رقم الهاتف: ${phoneController.text}
+- العنوان: ${addressController.text}
+- المجموع الكلي: ${_formatPrice(total)}
+
+مع تحياتنا،
+فريق المبيعات
+''';
+
+      await Share.shareXFiles(
+        [XFile(file.path)],
+        text: emailBody,
+        subject: 'فاتورة مبيعات - ${clientNameController.text}',
+      );
+
+      _showSuccessSnackbar('تم إعداد البريد الإلكتروني بنجاح');
+    } catch (e) {
+      _showErrorSnackbar('خطأ في إعداد البريد الإلكتروني: ${e.toString()}');
     }
   }
 
