@@ -3,6 +3,11 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:super_ge/controllers/bills_controller.dart';
 
+/// A screen that displays a list of all saved bills.
+///
+/// This view fetches and displays all bills from the Firebase 'bills' collection.
+/// Each bill is displayed in a card with client details, items, total amount,
+/// and the representative's name. It also provides an option to delete a bill.
 class BillsView extends StatelessWidget {
   const BillsView({super.key});
 
@@ -11,6 +16,7 @@ class BillsView extends StatelessWidget {
     return GetBuilder<BillsController>(
       init: BillsController(),
       builder: (controller) {
+        // Show a loading indicator while bills are being fetched.
         if (controller.isLoading) {
           return Scaffold(
             appBar: AppBar(
@@ -20,6 +26,7 @@ class BillsView extends StatelessWidget {
           );
         }
 
+        // Show a message if there are no bills.
         if (controller.bills.isEmpty) {
           return Scaffold(
             appBar: AppBar(
@@ -29,6 +36,7 @@ class BillsView extends StatelessWidget {
           );
         }
 
+        // Display the list of bills.
         return Scaffold(
           appBar: AppBar(
             title: const Text('الفواتير'),
@@ -53,6 +61,7 @@ class BillsView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Bill header with client name and date.
                       Container(
                         padding: const EdgeInsets.symmetric(
                             vertical: 8, horizontal: 12),
@@ -78,6 +87,7 @@ class BillsView extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
+                      // Client details.
                       Row(
                         children: [
                           const Icon(Icons.phone,
@@ -107,6 +117,7 @@ class BillsView extends StatelessWidget {
                         ],
                       ),
                       const Divider(height: 20),
+                      // Expandable list of items in the bill.
                       ExpansionTile(
                         title: const Text('تفاصيل العناصر',
                             style: TextStyle(fontWeight: FontWeight.w600)),
@@ -124,6 +135,7 @@ class BillsView extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
+                      // Total amount and representative name.
                       Row(
                         children: [
                           const Icon(Icons.attach_money,
@@ -142,6 +154,7 @@ class BillsView extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 6),
+                      // Delete button for the bill.
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton.icon(

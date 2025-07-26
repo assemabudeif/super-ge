@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:super_ge/controllers/add_new_note_controller.dart';
 
+/// A screen for adding a new note.
+///
+/// This view provides a form for a user to create a new note, specifying
+/// a name (for a client or representative), an amount, and the type of note
+/// (client or representative) using a dropdown menu.
 class AddNewNote extends StatelessWidget {
   const AddNewNote({super.key});
 
@@ -20,9 +25,10 @@ class AddNewNote extends StatelessWidget {
               key: controller.formKey,
               child: Column(
                 children: [
+                  // Name Text Field
                   TextFormField(
                     controller: controller.nameController,
-                    decoration: const InputDecoration(labelText: 'اسم العميل'),
+                    decoration: const InputDecoration(labelText: 'الاسم'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'الاسم مطلوب';
@@ -31,6 +37,7 @@ class AddNewNote extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 16),
+                  // Amount Text Field
                   TextFormField(
                     controller: controller.amountController,
                     decoration: const InputDecoration(labelText: 'المبلغ'),
@@ -43,6 +50,7 @@ class AddNewNote extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 16),
+                  // Note Type Dropdown
                   DropdownButtonFormField<NoteType>(
                     value: controller.selectedType,
                     onChanged: (value) {
@@ -54,10 +62,15 @@ class AddNewNote extends StatelessWidget {
                         child: Text(type.text),
                       );
                     }).toList(),
+                    decoration: const InputDecoration(
+                      labelText: 'النوع',
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                   const SizedBox(height: 16),
+                  // Loading indicator or Submit button
                   if (controller.isLoading)
-                    Center(child: const CircularProgressIndicator())
+                    const Center(child: CircularProgressIndicator())
                   else
                     SizedBox(
                       width: double.infinity,

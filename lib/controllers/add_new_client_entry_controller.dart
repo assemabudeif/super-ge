@@ -18,27 +18,42 @@ import 'package:pdf/widgets.dart' as pw;
 
 import 'mandob_home_controller.dart';
 
+/// A controller class for managing the process of adding a new client entry.
+///
+/// This class handles form state, data fetching, validation, and submission
+/// for creating new client entries, including generating and sharing bills.
 class AddNewClientEntryController extends GetxController {
+  // A global key for the form to handle validation.
   final formKey = GlobalKey<FormState>();
+
+  // Text editing controllers for client information.
   final clientNameController = TextEditingController();
   final phoneController = TextEditingController();
   final addressController = TextEditingController();
   final currentLocationController = TextEditingController();
 
+  // Lists to manage available and selected collections.
   List<CollectionsModel> availableCollections = [];
   List<CollectionsModel> selectedCollections = [];
+
+  // Maps to hold controllers for quantity and price of each selected collection.
   Map<String, TextEditingController> quantityControllers = {};
   Map<String, TextEditingController> priceControllers = {};
+
+  // A flag to indicate if the controller is currently processing a request.
   bool isLoading = false;
 
   @override
   void onInit() {
     super.onInit();
+    // Fetch collections when the controller is initialized.
     getCollections();
   }
 
+  /// Calculates the total price of all selected collections.
   double get totalPrice => _calculateTotal(selectedCollections);
 
+  /// Fetches the list of available collections from Firebase.
   Future<void> getCollections() async {
     try {
       isLoading = true;
@@ -56,6 +71,10 @@ class AddNewClientEntryController extends GetxController {
     }
   }
 
+  /// Toggles the selection of a collection.
+  ///
+  /// Adds or removes a collection from the `selectedCollections` list and
+  /// manages its corresponding quantity and price controllers.
   void toggleCollection(CollectionsModel collection) {
     if (collection.id == null) return;
 
@@ -73,6 +92,10 @@ class AddNewClientEntryController extends GetxController {
     update();
   }
 
+  /// Submits the new client entry form.
+  ///
+  /// Validates the form and selected collections, processes the entries,
+  /// shares the bill, and then clears the form.
   Future<void> submit() async {
     if (!formKey.currentState!.validate()) return;
 
@@ -110,6 +133,7 @@ class AddNewClientEntryController extends GetxController {
     }
   }
 
+  /// Validates the quantity and price inputs for all selected collections.
   bool _validateAllInputs() {
     for (var collection in selectedCollections) {
       if (collection.id == null) continue;
@@ -153,6 +177,7 @@ class AddNewClientEntryController extends GetxController {
     return true;
   }
 
+  /// Processes and saves the new entries to Firebase.
   Future<void> _processEntries() async {
     for (var collection in selectedCollections) {
       if (collection.id == null) continue;
@@ -160,7 +185,7 @@ class AddNewClientEntryController extends GetxController {
       final quantity = int.parse(quantityControllers[collection.id!]!.text);
       final price = double.parse(priceControllers[collection.id!]!.text);
 
-      // Add entry
+      // Add entry to the database.
       await FirebaseService.entriesCollection(collection.id!).add(
         EntriesModel(
           clientName: clientNameController.text.trim(),
@@ -172,13 +197,14 @@ class AddNewClientEntryController extends GetxController {
         ).toJson(),
       );
 
-      // Update collection quantity
+      // Update the quantity of the collection in the database.
       await FirebaseService.collectionsCollection.doc(collection.id).update({
         'quantity': collection.quantity - quantity,
       });
     }
   }
 
+  /// Initiates the bill sharing process.
   Future<void> _shareBill() async {
     try {
       await saveBillToFirebase();
@@ -188,6 +214,7 @@ class AddNewClientEntryController extends GetxController {
     }
   }
 
+  /// Shows a dialog with options for sharing the bill.
   Future<void> _showShareDialog() async {
     await Get.dialog(
       AlertDialog(
@@ -266,6 +293,7 @@ class AddNewClientEntryController extends GetxController {
     );
   }
 
+  /// A helper widget to build a share option in the dialog.
   Widget _buildShareOption({
     required IconData icon,
     required String title,
@@ -329,6 +357,7 @@ class AddNewClientEntryController extends GetxController {
     );
   }
 
+  /// Shares the generated bill as a PDF file.
   Future<void> _shareAsPdf() async {
     try {
       isLoading = true;
@@ -355,6 +384,7 @@ class AddNewClientEntryController extends GetxController {
     }
   }
 
+  /// Saves the generated bill to the device's downloads folder.
   Future<void> _saveToDevice() async {
     try {
       isLoading = true;
@@ -381,6 +411,7 @@ class AddNewClientEntryController extends GetxController {
     }
   }
 
+  /// Shares the generated bill via WhatsApp.
   Future<void> _shareViaWhatsApp() async {
     try {
       isLoading = true;
@@ -405,6 +436,7 @@ class AddNewClientEntryController extends GetxController {
     }
   }
 
+  /// Shares the generated bill via email.
   Future<void> _shareViaEmail() async {
     try {
       isLoading = true;
@@ -430,6 +462,7 @@ class AddNewClientEntryController extends GetxController {
     }
   }
 
+  /// Saves the PDF file to the device's external storage/downloads directory.
   Future<void> _saveToDownloads(Uint8List pdf) async {
     try {
       final directory = await getExternalStorageDirectory();
@@ -453,6 +486,7 @@ class AddNewClientEntryController extends GetxController {
     }
   }
 
+  /// Shares the PDF file using a specific application package.
   Future<void> _shareViaSpecificApp(Uint8List pdf, String packageName) async {
     try {
       final tempDir = await getTemporaryDirectory();
@@ -477,6 +511,7 @@ class AddNewClientEntryController extends GetxController {
     }
   }
 
+  /// Composes an email with the PDF bill as an attachment.
   Future<void> _shareAsEmail(Uint8List pdf) async {
     try {
       final tempDir = await getTemporaryDirectory();
@@ -517,6 +552,7 @@ class AddNewClientEntryController extends GetxController {
     }
   }
 
+  /// Clears the form fields and resets the state of the controller.
   Future<void> _clearFormAndRefresh() async {
     clientNameController.clear();
     phoneController.clear();
@@ -561,6 +597,7 @@ class AddNewClientEntryController extends GetxController {
     return '${price.toStringAsFixed(2)} جنيه مصري';
   }
 
+  /// Creates a PDF bill from the provided collections and client information.
   Future<Uint8List> createBill(
     List<CollectionsModel> collections,
     String clientName,
@@ -600,6 +637,7 @@ class AddNewClientEntryController extends GetxController {
     }
   }
 
+  /// Requests permission to manage external storage.
   Future<bool> _requestStoragePermission() async {
     PermissionStatus status = await Permission.manageExternalStorage.status;
 
@@ -614,6 +652,7 @@ class AddNewClientEntryController extends GetxController {
     return true;
   }
 
+  /// Loads the Arabic font for the PDF document.
   Future<pw.Font> _loadArabicFont() async {
     try {
       // Try to load the Arabic font
@@ -632,6 +671,7 @@ class AddNewClientEntryController extends GetxController {
     }
   }
 
+  /// Builds the content of the PDF bill.
   pw.Widget _buildPdfContent(
     List<CollectionsModel> collections,
     String clientName,
@@ -803,6 +843,7 @@ class AddNewClientEntryController extends GetxController {
     );
   }
 
+  /// A helper widget to build a row in the client information section of the PDF.
   pw.Widget _buildInfoRow(String label, String value) {
     return pw.Padding(
       padding: const pw.EdgeInsets.symmetric(vertical: 3),
@@ -829,6 +870,7 @@ class AddNewClientEntryController extends GetxController {
     );
   }
 
+  /// Builds the items table for the PDF bill.
   pw.Widget _buildItemsTable(List<CollectionsModel> collections) {
     return pw.Table(
       border: pw.TableBorder.all(color: PdfColors.grey400, width: 1),
@@ -880,6 +922,7 @@ class AddNewClientEntryController extends GetxController {
     );
   }
 
+  /// A helper widget to build a cell in the items table of the PDF.
   pw.Widget _buildTableCell(String text, {bool isHeader = false}) {
     return pw.Container(
       padding: const pw.EdgeInsets.all(8),
@@ -895,6 +938,7 @@ class AddNewClientEntryController extends GetxController {
     );
   }
 
+  /// Calculates the total price of the selected collections.
   double _calculateTotal(List<CollectionsModel> collections) {
     return collections.fold<double>(
       0,
@@ -910,6 +954,7 @@ class AddNewClientEntryController extends GetxController {
     );
   }
 
+  /// Shares the generated PDF bill using the native share dialog.
   Future<void> shareBillAsPdf(Uint8List pdf) async {
     try {
       final tempDir = await getTemporaryDirectory();
@@ -931,6 +976,7 @@ class AddNewClientEntryController extends GetxController {
     }
   }
 
+  /// Saves the bill information to the Firebase Firestore 'bills' collection.
   Future<void> saveBillToFirebase() async {
     try {
       final mandobName = Get.find<MandobHomeController>().name ?? 'غير محدد';
@@ -964,6 +1010,7 @@ class AddNewClientEntryController extends GetxController {
     }
   }
 
+  /// Shows an error message in a snackbar.
   void _showErrorSnackbar(String message) {
     Get.snackbar(
       'خطأ',
@@ -974,6 +1021,7 @@ class AddNewClientEntryController extends GetxController {
     );
   }
 
+  /// Shows a success message in a snackbar.
   void _showSuccessSnackbar(String message) {
     Get.snackbar(
       'تم',
@@ -986,6 +1034,7 @@ class AddNewClientEntryController extends GetxController {
 
   @override
   void onClose() {
+    // Dispose all text editing controllers to free up resources.
     clientNameController.dispose();
     phoneController.dispose();
     addressController.dispose();

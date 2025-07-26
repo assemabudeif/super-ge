@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:super_ge/controllers/add_new_mandob_controller.dart';
 
+/// A screen for adding a new representative (Mandob).
+///
+/// This view provides a simple form for an admin to create a new representative
+/// by providing their name, phone number, and a password.
 class AddNewMandob extends StatelessWidget {
   const AddNewMandob({super.key});
 
@@ -20,6 +24,7 @@ class AddNewMandob extends StatelessWidget {
               key: controller.fromKey,
               child: Column(
                 children: [
+                  // Name Text Field
                   TextFormField(
                     controller: controller.nameController,
                     decoration: const InputDecoration(labelText: 'اسم المندوب'),
@@ -31,6 +36,7 @@ class AddNewMandob extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 16),
+                  // Phone Number Text Field
                   TextFormField(
                     controller: controller.phoneController,
                     decoration: const InputDecoration(labelText: 'رقم المندوب'),
@@ -42,6 +48,7 @@ class AddNewMandob extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 16),
+                  // Password Text Field
                   TextFormField(
                     controller: controller.passwordController,
                     decoration: const InputDecoration(labelText: 'كلمة المرور'),
@@ -53,8 +60,9 @@ class AddNewMandob extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 16),
+                  // Loading indicator or Submit button
                   if (controller.isLoading)
-                    Center(child: const CircularProgressIndicator())
+                    const Center(child: CircularProgressIndicator())
                   else
                     SizedBox(
                       width: double.infinity,

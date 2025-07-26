@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+/// Creates a [MaterialColor] swatch from a single [Color].
+///
+/// This function generates a full color swatch (from shade 50 to 900)
+/// based on a single input color, which is useful for defining the
+/// primary and accent colors in a Flutter `ThemeData`.
 MaterialColor createMaterialColor(Color color) {
   List strengths = <double>[.05];
   final Map<int, Color> swatch = <int, Color>{};

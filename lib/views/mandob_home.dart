@@ -8,6 +8,15 @@ import 'package:super_ge/views/all_notes.dart';
 import 'add_new_entry.dart';
 import '../controllers/mandob_home_controller.dart';
 
+/// The main dashboard screen for the representative (Mandob) user.
+///
+/// This view currently displays the `AddNewClientEntry` screen as its main body,
+/// allowing the representative to directly start creating a new bill.
+/// It also includes a drawer for navigation to other screens like 'Notes' and for logging out.
+///
+/// Note: The original `CustomScrollView` for displaying categories is commented out.
+/// This was likely intended to show a list of collections that the user could tap
+/// to add a single entry for that specific collection.
 class MandobHome extends GetView<MandobHomeController> {
   const MandobHome({super.key});
 
@@ -16,6 +25,7 @@ class MandobHome extends GetView<MandobHomeController> {
     return GetBuilder<MandobHomeController>(
       init: MandobHomeController(),
       builder: (controller) => Scaffold(
+        // A drawer for navigation and user info.
         drawer: Drawer(
           child: ListView(
             padding: EdgeInsets.only(
@@ -29,14 +39,14 @@ class MandobHome extends GetView<MandobHomeController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'لوحة التحكم',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
                       ),
                     ),
-                    Text(
+                    const Text(
                       'المندوب',
                       style: TextStyle(
                         color: Colors.white,
@@ -45,14 +55,14 @@ class MandobHome extends GetView<MandobHomeController> {
                     ),
                     Text(
                       'الاسم: ${controller.name}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                       ),
                     ),
                     Text(
                       'رقم الموبايل: ${controller.phone}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                       ),
@@ -66,7 +76,7 @@ class MandobHome extends GetView<MandobHomeController> {
                   Get.to(() => const AllNotes());
                 },
               ),
-              Divider(),
+              const Divider(),
               ListTile(
                 title: const Text('تسجيل الخروج'),
                 onTap: () {
@@ -80,8 +90,11 @@ class MandobHome extends GetView<MandobHomeController> {
           title: const Text('لوحة التحكم المندوب'),
           centerTitle: true,
         ),
-        body: AddNewClientEntry(),
-        /*CustomScrollView(
+        // The body of the screen is set to the AddNewClientEntry view.
+        body: const AddNewClientEntry(),
+        /*
+        // The original implementation with a list of categories is commented out.
+        CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
@@ -135,7 +148,7 @@ class MandobHome extends GetView<MandobHomeController> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            // قسم العنوان بخلفية متدرجة
+                            // Card header with category name.
                             Container(
                               width: double.infinity,
                               padding: const EdgeInsets.all(16),
@@ -164,7 +177,7 @@ class MandobHome extends GetView<MandobHomeController> {
                                 maxLines: 3,
                               ),
                             ),
-                            // قسم التفاصيل
+                            // Card body with category details.
                             Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Column(
@@ -205,6 +218,7 @@ class MandobHome extends GetView<MandobHomeController> {
     );
   }
 
+  /// A helper widget to build a detail item in the category card.
   Widget _buildDetailItem(String label, num value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,

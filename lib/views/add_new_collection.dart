@@ -3,6 +3,11 @@ import 'package:get/get.dart';
 
 import '../controllers/add_new_collection_controller.dart';
 
+/// A screen for adding a new collection (category).
+///
+/// This view provides a form for an admin to create a new collection by
+/// providing details such as name, selling price range, wholesale price, and quantity.
+/// It features a modern UI with a gradient background and a card-based form.
 class AddNewCollection extends StatelessWidget {
   const AddNewCollection({super.key});
 
@@ -17,7 +22,7 @@ class AddNewCollection extends StatelessWidget {
           ),
           body: Container(
             decoration: const BoxDecoration(
-              // خلفية متدرجة تعطي مظهر عصري
+              // A modern gradient background.
               gradient: LinearGradient(
                 colors: [
                   Color(0xFF3F51B5),
@@ -51,7 +56,7 @@ class AddNewCollection extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 24),
-                          // حقل الاسم
+                          // Name Text Field
                           TextFormField(
                             controller: controller.nameController,
                             decoration: InputDecoration(
@@ -70,7 +75,7 @@ class AddNewCollection extends StatelessWidget {
                             },
                           ),
                           const SizedBox(height: 16),
-                          // حقل سعر البداية
+                          // Start Sell Price Text Field
                           TextFormField(
                             controller: controller.startSellPriceController,
                             keyboardType: TextInputType.number,
@@ -93,7 +98,7 @@ class AddNewCollection extends StatelessWidget {
                             },
                           ),
                           const SizedBox(height: 16),
-                          // حقل سعر النهاية
+                          // End Sell Price Text Field
                           TextFormField(
                             controller: controller.endSellPriceController,
                             keyboardType: TextInputType.number,
@@ -116,7 +121,7 @@ class AddNewCollection extends StatelessWidget {
                             },
                           ),
                           const SizedBox(height: 16),
-                          // حقل سعر الجملة
+                          // Wholesale Price Text Field
                           TextFormField(
                             controller: controller.gomlahPriceController,
                             keyboardType: TextInputType.number,
@@ -139,7 +144,7 @@ class AddNewCollection extends StatelessWidget {
                             },
                           ),
                           const SizedBox(height: 16),
-                          // حقل الكمية
+                          // Quantity Text Field
                           TextFormField(
                             controller: controller.quantityController,
                             keyboardType: TextInputType.number,
@@ -163,9 +168,10 @@ class AddNewCollection extends StatelessWidget {
                             },
                           ),
                           const SizedBox(height: 24),
+                          // Loading indicator or Submit button
                           if (controller.isLoading)
-                            Center(
-                              child: const CircularProgressIndicator(),
+                            const Center(
+                              child: CircularProgressIndicator(),
                             )
                           else
                             SizedBox(

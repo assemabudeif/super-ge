@@ -3,6 +3,11 @@ import 'package:get/get.dart';
 
 import '../controllers/login_controller.dart';
 
+/// The login screen for the application.
+///
+/// This view provides a user interface for users to enter their phone number
+/// and password to log in. It uses a `Form` for validation and displays a
+/// modern, card-based UI.
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
 
@@ -41,7 +46,7 @@ class LoginView extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 32),
-                      // حقل إدخال رقم الهاتف
+                      // Phone number input field.
                       TextFormField(
                         // keyboardType: TextInputType.phone,
                         decoration: const InputDecoration(
@@ -58,7 +63,7 @@ class LoginView extends StatelessWidget {
                         },
                       ),
                       const SizedBox(height: 16),
-                      // حقل إدخال كلمة المرور مع زر لإظهار/إخفاء النص
+                      // Password input field with a toggle for visibility.
                       Obx(
                         () => TextFormField(
                           obscureText: controller.hidePassword.value,
@@ -84,12 +89,12 @@ class LoginView extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 32),
-                      // زر تسجيل الدخول
+                      // Login button or loading indicator.
                       SizedBox(
                         width: double.infinity,
                         height: 50,
                         child: controller.isLoading
-                            ? Center(
+                            ? const Center(
                                 child: CircularProgressIndicator(),
                               )
                             : ElevatedButton(

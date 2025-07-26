@@ -5,8 +5,13 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../models/entries_model.dart';
 
-/// Widget to display client data in a modern UI
+/// A widget to display the details of a single client entry in a styled card.
+///
+/// This widget presents the information from an [EntriesModel] in a visually
+/// appealing format, including a gradient header, client details, and a delete button.
+/// It is used in the `EntriesView` to list all entries for a collection.
 class EntryWidget extends StatelessWidget {
+  /// The data model for the entry to be displayed.
   final EntriesModel model;
 
   const EntryWidget({
@@ -25,7 +30,7 @@ class EntryWidget extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Gradient header displaying the client's name
+          // Gradient header displaying the client's name and a delete button.
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
@@ -53,16 +58,18 @@ class EntryWidget extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
+                // Delete button for the entry.
                 IconButton(
                   icon: const Icon(Icons.delete, color: Colors.white),
                   onPressed: () {
+                    // Finds the EntriesController instance and calls the delete method.
                     Get.put(EntriesController()).deleteEntry(model.id!);
                   },
                 ),
               ],
             ),
           ),
-          // Details section
+          // Details section for the entry.
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -71,6 +78,7 @@ class EntryWidget extends StatelessWidget {
                 const SizedBox(height: 8),
                 _buildRow('الموقع الحالي', model.currentLocation),
                 const SizedBox(height: 8),
+                // The phone number is a tappable link to open the dialer.
                 _buildRow('رقم الهاتف', model.phoneNumber, onTap: () {
                   launchUrlString(
                     "tel:${model.phoneNumber}",
@@ -88,7 +96,9 @@ class EntryWidget extends StatelessWidget {
     );
   }
 
-  // Helper method to build a detail row with label and value.
+  /// A helper method to build a detail row with a label and a value.
+  ///
+  /// Optionally, an `onTap` function can be provided to make the value tappable.
   Widget _buildRow(
     String label,
     String value, {
@@ -117,9 +127,11 @@ class EntryWidget extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.black87,
+                    // Underline the text if it's tappable.
                     decoration: onTap != null ? TextDecoration.underline : null,
                   ),
                 ),
+                // Show a phone icon if it's a phone number.
                 if (onTap != null) ...[
                   const SizedBox(width: 8),
                   const Icon(

@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:super_ge/controllers/add_new_entry_controller.dart';
 
+/// A screen for adding a single new financial entry for a specific collection.
+///
+/// This view provides a form for a representative to input client details,
+/// quantity, and price for a single item type. This is an alternative to the
+/// more complex bill creation screen (`AddNewClientEntry`).
 class AddNewEntry extends StatelessWidget {
   const AddNewEntry({super.key});
 
@@ -38,7 +43,7 @@ class AddNewEntry extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      // اسم العميل
+                      // Client Name Text Field
                       TextFormField(
                         controller: controller.clientNameController,
                         decoration: InputDecoration(
@@ -57,7 +62,7 @@ class AddNewEntry extends StatelessWidget {
                         },
                       ),
                       const SizedBox(height: 16),
-                      // رقم الهاتف
+                      // Phone Number Text Field
                       TextFormField(
                         controller: controller.phoneController,
                         keyboardType: TextInputType.phone,
@@ -77,7 +82,7 @@ class AddNewEntry extends StatelessWidget {
                         },
                       ),
                       const SizedBox(height: 16),
-                      // العنوان
+                      // Address Text Field
                       TextFormField(
                         controller: controller.addressController,
                         decoration: InputDecoration(
@@ -96,7 +101,7 @@ class AddNewEntry extends StatelessWidget {
                         },
                       ),
                       const SizedBox(height: 16),
-                      // الموقع الحالي
+                      // Current Location Text Field
                       TextFormField(
                         controller: controller.currentLocationController,
                         decoration: InputDecoration(
@@ -115,7 +120,7 @@ class AddNewEntry extends StatelessWidget {
                         },
                       ),
                       const SizedBox(height: 16),
-                      // الكمية
+                      // Quantity Text Field
                       TextFormField(
                         controller: controller.quantityController,
                         keyboardType: TextInputType.number,
@@ -138,11 +143,11 @@ class AddNewEntry extends StatelessWidget {
                         },
                       ),
                       const SizedBox(height: 16),
-                      // السعر
+                      // Price Text Field
                       TextFormField(
                         controller: controller.priceController,
-                        keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
                         decoration: InputDecoration(
                           labelText: 'السعر',
                           hintText: 'أدخل السعر',
@@ -162,9 +167,9 @@ class AddNewEntry extends StatelessWidget {
                         },
                       ),
                       const SizedBox(height: 24),
-                      // زر الإرسال
+                      // Submit Button
                       if (controller.isLoading)
-                        Center(child: const CircularProgressIndicator())
+                        const Center(child: CircularProgressIndicator())
                       else
                         SizedBox(
                           width: double.infinity,

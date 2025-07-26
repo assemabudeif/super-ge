@@ -3,6 +3,11 @@ import 'package:get/get.dart';
 import 'package:super_ge/controllers/add_new_client_entry_controller.dart';
 import 'package:super_ge/core/theme/app_colors.dart';
 
+/// A screen for adding a new client entry, which includes creating a new bill.
+///
+/// This view allows the user (a representative) to input client information,
+/// select items from available collections, specify quantities and prices,
+/// and submit the information to create a new bill and associated financial entries.
 class AddNewClientEntry extends StatelessWidget {
   const AddNewClientEntry({super.key});
 
@@ -43,6 +48,7 @@ class AddNewClientEntry extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 16),
+                              // Client Name Text Field
                               TextFormField(
                                 controller: controller.clientNameController,
                                 decoration: InputDecoration(
@@ -60,6 +66,7 @@ class AddNewClientEntry extends StatelessWidget {
                                 },
                               ),
                               const SizedBox(height: 16),
+                              // Phone Number Text Field
                               TextFormField(
                                 controller: controller.phoneController,
                                 keyboardType: TextInputType.phone,
@@ -78,6 +85,7 @@ class AddNewClientEntry extends StatelessWidget {
                                 },
                               ),
                               const SizedBox(height: 16),
+                              // Address Text Field
                               TextFormField(
                                 controller: controller.addressController,
                                 decoration: InputDecoration(
@@ -95,6 +103,7 @@ class AddNewClientEntry extends StatelessWidget {
                                 },
                               ),
                               const SizedBox(height: 16),
+                              // Current Location Text Field
                               TextFormField(
                                 controller:
                                     controller.currentLocationController,
@@ -117,17 +126,6 @@ class AddNewClientEntry extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      // ElevatedButton.icon(
-                      //   onPressed: () {
-                      //     controller.clearFormAndRefresh();
-                      //   },
-                      //   icon: const Icon(
-                      //     Icons.refresh,
-                      //     color: Colors.white,
-                      //   ),
-                      //   label: const Text('تحديث التصنيفات'),
-                      // ),
-                      const SizedBox(height: 16),
                       // Collections Section
                       Card(
                         elevation: 4,
@@ -147,6 +145,7 @@ class AddNewClientEntry extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 16),
+                              // Dynamically generate a list of available collections.
                               ...controller.availableCollections.map(
                                 (collection) => Column(
                                   children: [
@@ -169,6 +168,7 @@ class AddNewClientEntry extends StatelessWidget {
                                       onChanged: (_) => controller
                                           .toggleCollection(collection),
                                     ),
+                                    // Show quantity and price fields if the collection is selected.
                                     if (controller.selectedCollections
                                         .contains(collection))
                                       Padding(
@@ -178,6 +178,7 @@ class AddNewClientEntry extends StatelessWidget {
                                         ),
                                         child: Row(
                                           children: [
+                                            // Quantity Text Field
                                             Expanded(
                                               child: TextFormField(
                                                 controller: controller
@@ -208,6 +209,7 @@ class AddNewClientEntry extends StatelessWidget {
                                               ),
                                             ),
                                             const SizedBox(width: 16),
+                                            // Price Text Field
                                             Expanded(
                                               child: TextFormField(
                                                 controller:
@@ -249,6 +251,7 @@ class AddNewClientEntry extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 12),
+                      // Total Price Display
                       Card(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
